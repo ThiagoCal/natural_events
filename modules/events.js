@@ -7,8 +7,10 @@ const getAllEvents = () => {
 }
 
 const insertEvents = (event) => {
+    console.log('event.js modules:', event)
     return db('natural_events')
         .insert(event)
+        .returning('*')
 }
 
 module.exports = {
