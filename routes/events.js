@@ -10,6 +10,6 @@ const router = express.Router()
 router.get('/', _getAllEvents)
 router.get('/earthquakes', _getAllEarthquakes)
 router.post('/events', _insertEvents)
-router.delete('/delete', _deleteDuplicateEvents)
+router.get('/delete', _deleteDuplicateEvents)
 
 module.exports = router 
