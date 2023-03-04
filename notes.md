@@ -14,12 +14,13 @@
 ## Calculating radius
 -- 632.42 km (to sicily)
 
+## get country from lat and long
+
 ## filter according to country 
 --using map - create new array of only the country of choice
 -- .includes('italy') && ofc .toLowerCase(   )
 
-## save all events in the past 180 days
---update (truncate table) and insert new info every 7 days with setTimeOut()
+## update (truncate table) and insert new info every 7 days with setTimeOut()
 
 ## DISPLAY
 -- google map api - to present a map

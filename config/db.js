@@ -21,14 +21,15 @@ const db = knex({
 
 })
 
-db('natural_events')
-    .select('id', 'title', 'country', 'category', 'date', 'lat', 'long', 'magnitude')
-    .then(rows => {
-        console.log(rows)
-    })
-    .catch(err => {
-        console.log(err)
-    })
+// db('natural_events')
+//     .select('id', 'title', 'country', 'category', 'date', 'lat', 'long', 'magnitude')
+//     .then(rows => {
+//         console.log(rows)
+//     })
+//     .catch(err => {
+//         console.log(err)
+//     })
+
 
 
 module.exports = {

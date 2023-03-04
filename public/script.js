@@ -25,7 +25,7 @@ const axiosTest = async () => {
 
 }
 
-// axiosTest()
+axiosTest()
 
 const postEarthquakeData = (data) => {
     const intervalID = setInterval(() => {
@@ -83,7 +83,6 @@ const postEONETData = (data) => {
 
     data.forEach((obj, index) => {
         const intervalID2 = setInterval(() => {
-            console.log('obj: ', obj);
             fetch('http://localhost:5002/api/events', {
                 method: 'POST',
                 headers: {
@@ -106,3 +105,6 @@ const postEONETData = (data) => {
 // function callFunctions(data) {
 //     postEONETData(postEvents(data))
 // }
+
+
+// use timeout function -> every week(7days) truncate table and readd
