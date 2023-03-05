@@ -1,137 +1,85 @@
-const axios = require('axios')
-const options = {
-    method: 'GET',
-    url: 'https://everyearthquake.p.rapidapi.com/earthquakes',
-    params: {
-        start: '1',
-        count: '50',
-        type: 'earthquake',
-        magnitude: '5',
-        intensity: '1'
-    },
-    headers: {
-        'X-RapidAPI-Key': 'a93c190f12msh3bb1c372e41f273p1cd963jsn109978945e4a',
-        'X-RapidAPI-Host': 'everyearthquake.p.rapidapi.com'
-    }
-};
-
-let newArr
-const axiosTest = async () => {
-    const response = await axios.request(options)
-    const allData = response.data
-    newArr = allData['data']
-    postEarthquakeData(newArr)
+let allEvents
+const getAllData = async () => {
+    const res = await fetch('http://localhost:5002/api')
+    const data = await res.json()
+    allEvents = data
+    initMap()
 }
 
-axiosTest()
+getAllData()
 
-const postEarthquakeData = async (data) => {
-    for (let i = 0; i < data.length; i++) {
-        const { magnitude, title, date, latitude: lat, longitude: long } = data[i]
-        let newObj = { magnitude, category: 'earthquake', title, date, lat, long }
-        let country = await getCountry(newObj.lat, newObj.long)
-        newObj.country = country
-            try{
-                const response = await fetch(`http://localhost:5002/api/events?category=${newObj.category}&lat=${newObj.lat}&long=${newObj.long}`)
-                if(!Object.keys(response).length){
-                    console.log("no data found");
-                    fetch('http://localhost:5002/api/events', {
-                        method: 'POST',
-                        headers: {
-                            'Content-type': 'application/json'
-                        },
-                        body: JSON.stringify(newObj)
-                    })
-                    .then(res => res.json())
-                    .then(data => console.log(data))
-                    .catch(err => console.log(err))
-                } else{
-                    const existingData = await response.json()
-                    console.log('Data already exists:', existingData[0])
-                }
-                
-            }
-        catch (err){
-            console.log(err)
+function initMap() {
+    const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 2.3,
+        center: { lat: 33.9391, lng: 67.7100 }
+    });
+    allEvents.forEach(event => {
+        const lat = +event.lat
+        const long = +event.long
+
+        const marker = new google.maps.Marker({
+            position: { lat: lat, lng: long },
+            map: map,
+        });
+
+    });
+
+    const uluru = { lat: -25.344, lng: 131.031 };
+}
+
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+const dropdownBtn = document.getElementById('dropdown-btn')
+dropdownBtn.addEventListener('click', myFunction)
+
+const searchInput = document.getElementById('myInput')
+searchInput.addEventListener('keyup', filterFunction)
+
+function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+
+function filterFunction() {
+    let filter = searchInput.value.toUpperCase();
+    let div = document.getElementById("myDropdown");
+    let a = document.querySelectorAll('.country')
+
+    for (let i = 0; i < a.length; i++) {
+        let textValue = a[i].textContent
+        if (textValue.toUpperCase().indexOf(filter) > -1) {
+            a[i].style.display = "";
+        } else {
+            a[i].style.display = "none";
         }
     }
 }
 
-const EONET_API_ENDPOINT = 'https://eonet.gsfc.nasa.gov/api/v3/events?start=2022-03-02&end=2023-03-02'
+async function getCountries() {
+    const dropdown = document.getElementById('myDropdown')
+    const res = await fetch('https://restcountries.com/v3.1/all')
+    let data = await res.json()
+    data = data.sort(function (a, b) {
+        var keyA = a.name.common,
+            keyB = b.name.common;
 
-const axiosEONET = async () => {
-    const response = await axios.get(EONET_API_ENDPOINT)
-    const events = response.data.events;
-    const filteredEvents = Promise.all (events.map(async event => {
-        // console.log('event', event)
-        const category = event['categories'][0]['title']
-        const title = event['title']
-        const geometryLength = event['geometry'].length
-        const unit = event['geometry'][geometryLength - 1]['magnitudeUnit']
-        let magnitude = event['geometry'][geometryLength - 1]['magnitudeValue'] + ' ' + unit
-        if (magnitude === 'null null') magnitude = ' '
+        // Compare the 2 country names
+        if (keyA < keyB) return -1;
+        if (keyA > keyB) return 1;
+        return 0;
+    });
 
-        const long = event['geometry'][geometryLength - 1]['coordinates'][0]
-        const lat = event['geometry'][geometryLength - 1]['coordinates'][1]
-        const date = event['geometry'][geometryLength - 1]['date']
-        let country =  await getCountry(lat,long)
-        let newObj = { category, title, magnitude, lat, long, date, country }
-        // console.log('newobj',newObj)
-        return newObj
-    }))
-    console.log(await filteredEvents)
-    postEONETData(await filteredEvents)
+    data.forEach(el => {
+        // creating a tags, setting id and appending all the country names into the dropdown
+        const a = document.createElement('a')
+        let id = el.altSpellings[0]
+        id = id.replace(/ +/g, '')
+        a.id = id
+        a.classList.add('country')
+
+        const countryName = document.createTextNode(el.name.common)
+        a.appendChild(countryName)
+        dropdown.appendChild(a)
+
+    })
 }
-
-axiosEONET()
-
-
-const postEONETData = async (data) => {
-    console.log(data)
-    for (let i = 0; i < data.length; i++) {
-        const obj = data[i];
-        console.log(obj)
-        try{
-            const response = await fetch(`http://localhost:5002/api/events?category=${obj.category}&lat=${obj.lat}&long=${obj.long}`)
-            if(!Object.keys(response).length){
-                try{
-                    console.log("no data found");
-                    const res = await fetch('http://localhost:5002/api/events', {
-                        method: 'POST',
-                        headers: {
-                          'Content-type': 'application/json'
-                        },
-                        body: JSON.stringify(obj)})
-                    const data = await res.json();
-                    console.log(data);
-                } catch (error) {
-                    console.log(`error: ${error} and data: ${data}`);
-                }
-            } else{
-                const existingData = await response.json()
-                console.log('Data already exists:', existingData[0])
-            }  
-        } catch(err){
-            console.log(err)
-        }
-    }
-}
-
-const getCountry = async (lat, long) =>{
-    try{
-        let latitude = lat
-        let longitude = long
-        let response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyAKG3n2BRP3bALN3nRj1Bq2uhF95M2bPJA&latlng=${latitude},${longitude}&sensor=false`)
-        let data = await response.json()
-        let result
-        data.results.forEach(element => {
-            if(element.types.includes('country')){ 
-                result = element.formatted_address
-            }
-        })
-        return result
-    }
-    catch(err){
-        console.log(err)
-    }
-}
+getCountries()
