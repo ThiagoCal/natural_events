@@ -1,6 +1,7 @@
 const { getAllEvents,
     insertEvents,
-    getAllEarthquakes,
+    getEventsByCategory,
+    getEventsByCountry,
     deleteDuplicateEvents } = require('../modules/events.js');
 
 
@@ -10,8 +11,15 @@ const _getAllEvents = (req, res) => {
         .catch(err => console.log(err));
 }
 
-const _getAllEarthquakes = (req, res) => {
-    getAllEarthquakes()
+const _getEventsByCategory = (req, res) => {
+    getEventsByCategory(req.params.category)
+        .then(data => res.json(data))
+        .catch(err => console.log(err));
+}
+
+const _getEventsByCountry = (req, res) => {
+    console.log('controllers:', req.params);
+    getEventsByCountry(req.params.country)
         .then(data => res.json(data))
         .catch(err => console.log(err));
 }
@@ -33,7 +41,8 @@ const _deleteDuplicateEvents = (req, res) => {
 module.exports = {
     _getAllEvents,
     _insertEvents,
-    _getAllEarthquakes,
-    _deleteDuplicateEvents
+    _deleteDuplicateEvents,
+    _getEventsByCategory,
+    _getEventsByCountry
 }
 

@@ -6,10 +6,17 @@ const getAllEvents = () => {
 
 }
 
-const getAllEarthquakes = () => {
+const getEventsByCategory = (category) => {
     return db('natural_events')
-        .select('id', 'title', 'country', 'category', 'date', 'lat', 'long', 'magnitude')
-        .where('category', 'earthquake')
+        .select('title', 'country', 'category', 'date', 'lat', 'long', 'magnitude')
+        .where({ category: category.substring(1) })
+}
+
+const getEventsByCountry = (country) => {
+    country = country.substring(1)
+    return db('natural_events')
+        .select('title', 'country', 'category', 'date', 'lat', 'long', 'magnitude')
+        .where({ country: country })
 }
 
 const insertEvents = (event) => {
@@ -33,6 +40,7 @@ const deleteDuplicateEvents = () => {
 module.exports = {
     getAllEvents,
     insertEvents,
-    getAllEarthquakes,
-    deleteDuplicateEvents
+    deleteDuplicateEvents,
+    getEventsByCategory,
+    getEventsByCountry
 }
