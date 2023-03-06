@@ -28,18 +28,6 @@ const getAllData = async () => {
 getAllData()
 
 
-// 
-const getCategory = async (ev) => {
-    ev.preventDefault()
-    const category = ev.target.innerText
-
-    const res = await fetch(`/api/:${category}`)
-    const data = await res.json()
-    allEvents = data
-    initMap()
-
-}
-
 
 // Dropdown Countries
 const dropdownBtn = document.getElementById('dropdown-btn')
@@ -66,6 +54,23 @@ function filterFunction() {
     }
 }
 
+const getCountry = async (ev) => {
+    ev.preventDefault()
+    let country = ev.target.innerText
+    console.log(country);
+    try {
+        const res = await fetch(`/api/:${country}`)
+        console.log(res);
+        const data = await res.json()
+        console.log(data);
+    } catch (err) {
+        console.log(err)
+    }
+
+    // allEvents = data
+    // initMap()
+}
+
 async function getCountries() {
     const dropdown = document.getElementById('myDropdown')
     const res = await fetch('https://restcountries.com/v3.1/all')
@@ -87,6 +92,8 @@ async function getCountries() {
         id = id.replace(/ +/g, '')
         a.id = id
         a.classList.add('country')
+        a.addEventListener('click', getCountry)
+
 
         const countryName = document.createTextNode(el.name.common)
         a.appendChild(countryName)
@@ -95,6 +102,7 @@ async function getCountries() {
     })
 }
 getCountries()
+
 // Dropdown Categories
 const categoryBtn = document.getElementById('category-btn')
 const categoryInput = document.getElementById('inputCategory')
@@ -120,6 +128,16 @@ const filterCategory = () => {
     }
 }
 
+const getCategory = async (ev) => {
+    ev.preventDefault()
+    let category = ev.target.innerText
+    if (category === 'Earthquakes') category = 'earthquake'
+    const res = await fetch(`/api/:${category}`)
+    const data = await res.json()
+    allEvents = data
+    initMap()
+
+}
 
 const getCategories = () => {
     categories.forEach(category => {
@@ -136,7 +154,9 @@ const getCategories = () => {
 
     })
 }
+
 getCategories()
+
 
 
 // adding eventListeners
