@@ -1,20 +1,53 @@
 let allEvents
 
-function initMap() {
-    const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 2,
-        center: { lat: 33.9391, lng: 67.7100 },
-        mapId: "e645adfa3d68e06b"
-    });
-    allEvents.forEach(event => {
-        const lat = +event.lat
-        const long = +event.long
+function initMap(country = 'Israel', zoom = 2) {
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ address: country }, (results, status) => {
+        if (status === "OK") {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: zoom,
+                center: results[0].geometry.location,
+                mapId: "e645adfa3d68e06b"
+            });
 
-        const marker = new google.maps.Marker({
-            position: { lat: lat, lng: long },
-            map: map,
-        });
 
+            allEvents.forEach(event => {
+                const lat = +event.lat
+                const long = +event.long
+
+                const content = '<div id="content">' +
+                    '<div id="siteNotice">' +
+                    "</div>" +
+                    '<h1 id="firstHeading" class="firstHeading">' + event.title + '</h1>' +
+                    '<div id="bodyContent">' +
+                    "<p>Category: " + event.category + "</p>" +
+                    "<p>Country: " + event.country + "</p>" +
+                    "<p>Date: " + event.date + "</p>" +
+                    "<p>Magnitude: " + event.magnitude + "</p>" +
+                    '<p>Lat: ' + event.lat + ' Long: ' + event.long + "</p>" +
+                    "</div>" +
+                    "</div>";
+
+                const infowindow = new google.maps.InfoWindow({
+                    content: content,
+                    ariaLabel: "Uluru",
+                });
+
+                const marker = new google.maps.Marker({
+                    position: { lat: lat, lng: long },
+                    map: map,
+                });
+
+                marker.addListener("click", () => {
+                    infowindow.open({
+                        anchor: marker,
+                        map,
+                    });
+                });
+            });
+        } else {
+            console.log("Geocode was not successful for the following reason: " + status);
+        }
     });
 
 }
@@ -31,7 +64,8 @@ getAllData()
 
 // Dropdown Countries
 const dropdownBtn = document.getElementById('dropdown-btn')
-dropdownBtn.addEventListener('click', myFunction)
+dropdownBtn.addEventListener('mouseover', myFunction)
+dropdownBtn.addEventListener('mouseout', myFunction)
 
 const searchInput = document.getElementById('myInput')
 searchInput.addEventListener('keyup', filterFunction)
@@ -57,18 +91,22 @@ function filterFunction() {
 const getCountry = async (ev) => {
     ev.preventDefault()
     let country = ev.target.innerText
-    console.log(country);
-    try {
-        const res = await fetch(`/api/:${country}`)
-        console.log(res);
-        const data = await res.json()
-        console.log(data);
-    } catch (err) {
-        console.log(err)
+    if (country === ' ') {
+        initMap()
+    } else {
+        try {
+            const res = await fetch(`/api/country/:${country}`)
+            const data = await res.json()
+
+            allEvents = data
+            let zoom = 4
+
+            initMap(country, zoom)
+        } catch (err) {
+            console.log(err)
+        }
     }
 
-    // allEvents = data
-    // initMap()
 }
 
 async function getCountries() {
@@ -159,9 +197,13 @@ getCategories()
 
 
 
-// adding eventListeners
-categoryBtn.addEventListener('click', showCategories)
+// adding eventListeners to the category button and filter
+categoryBtn.addEventListener('mouseover', showCategories)
+categoryBtn.addEventListener('mouseout', showCategories)
 categoryInput.addEventListener('keyup', filterCategory)
 
 
 
+// adding eventlistener to the reset button
+const resetBtn = document.getElementById('reset-btn')
+resetBtn.addEventListener('click', getAllData)

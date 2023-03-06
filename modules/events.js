@@ -13,10 +13,10 @@ const getEventsByCategory = (category) => {
 }
 
 const getEventsByCountry = (country) => {
-    console.log('module:', country)
+    country = country.substring(1)
     return db('natural_events')
         .select('title', 'country', 'category', 'date', 'lat', 'long', 'magnitude')
-        .whereILike('country', 'Indonesia')
+        .where({ country: country })
 }
 
 const insertEvents = (event) => {

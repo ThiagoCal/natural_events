@@ -18,7 +18,7 @@ const _getEventsByCategory = (req, res) => {
 }
 
 const _getEventsByCountry = (req, res) => {
-    console.log('controllers:', req.params.country);
+    console.log('controllers:', req.params);
     getEventsByCountry(req.params.country)
         .then(data => res.json(data))
         .catch(err => console.log(err));

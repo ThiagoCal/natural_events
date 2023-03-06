@@ -10,7 +10,7 @@ const router = express.Router()
 
 router.get('/', _getAllEvents)
 router.get('/:category', _getEventsByCategory)
-router.get('/Indonesia', _getEventsByCountry)
+router.get('/country/:country', _getEventsByCountry)
 router.post('/events', _insertEvents)
 router.delete('/delete', _deleteDuplicateEvents)
 
