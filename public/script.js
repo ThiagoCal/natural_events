@@ -1,17 +1,10 @@
 let allEvents
-const getAllData = async () => {
-    const res = await fetch('http://localhost:5002/api')
-    const data = await res.json()
-    allEvents = data
-    initMap()
-}
-
-getAllData()
 
 function initMap() {
     const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 2.3,
-        center: { lat: 33.9391, lng: 67.7100 }
+        zoom: 2,
+        center: { lat: 33.9391, lng: 67.7100 },
+        mapId: "e645adfa3d68e06b"
     });
     allEvents.forEach(event => {
         const lat = +event.lat
@@ -24,11 +17,31 @@ function initMap() {
 
     });
 
-    const uluru = { lat: -25.344, lng: 131.031 };
 }
 
-/* When the user clicks on the button,
-toggle between hiding and showing the dropdown content */
+const getAllData = async () => {
+    const res = await fetch('http://localhost:5002/api')
+    const data = await res.json()
+    allEvents = data
+    initMap()
+}
+getAllData()
+
+
+// 
+const getCategory = async (ev) => {
+    ev.preventDefault()
+    const category = ev.target.innerText
+
+    const res = await fetch(`/api/:${category}`)
+    const data = await res.json()
+    allEvents = data
+    initMap()
+
+}
+
+
+// Dropdown Countries
 const dropdownBtn = document.getElementById('dropdown-btn')
 dropdownBtn.addEventListener('click', myFunction)
 
@@ -41,7 +54,6 @@ function myFunction() {
 
 function filterFunction() {
     let filter = searchInput.value.toUpperCase();
-    let div = document.getElementById("myDropdown");
     let a = document.querySelectorAll('.country')
 
     for (let i = 0; i < a.length; i++) {
@@ -83,3 +95,53 @@ async function getCountries() {
     })
 }
 getCountries()
+// Dropdown Categories
+const categoryBtn = document.getElementById('category-btn')
+const categoryInput = document.getElementById('inputCategory')
+const categories = ['Severe Storms', 'Sea and Lake Ice', 'Earthquakes', 'Wildfires', 'Volcanoes']
+const categoryDiv = document.getElementById("categoryDropdown")
+
+const showCategories = () => {
+    categoryDiv.classList.toggle("show");
+
+}
+
+const filterCategory = () => {
+    let filter = categoryInput.value.toUpperCase();
+    let a = document.querySelectorAll('.category')
+
+    for (let i = 0; i < a.length; i++) {
+        let textValue = a[i].textContent
+        if (textValue.toUpperCase().indexOf(filter) > -1) {
+            a[i].style.display = "";
+        } else {
+            a[i].style.display = "none";
+        }
+    }
+}
+
+
+const getCategories = () => {
+    categories.forEach(category => {
+        const a = document.createElement('a')
+        let id = category.toLowerCase()
+        id = id.replace(/ +/g, '')
+        a.id = id
+        a.classList.add('category')
+        a.addEventListener('click', getCategory)
+
+        const categoryName = document.createTextNode(category)
+        a.appendChild(categoryName)
+        categoryDiv.appendChild(a)
+
+    })
+}
+getCategories()
+
+
+// adding eventListeners
+categoryBtn.addEventListener('click', showCategories)
+categoryInput.addEventListener('keyup', filterCategory)
+
+
+

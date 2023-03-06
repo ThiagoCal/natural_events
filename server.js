@@ -9,7 +9,7 @@ app.use(cors())
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 
-app.use('/main', express.static(__dirname + '/public'))
+app.use('/', express.static(__dirname + '/public'))
 app.use('/api', events_router)
 
 app.listen(5002, () => {

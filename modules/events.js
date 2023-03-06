@@ -12,6 +12,12 @@ const getAllEarthquakes = () => {
         .where('category', 'earthquake')
 }
 
+const getEventsByCategory = (category) => {
+    return db('natural_events')
+        .select('title', 'country', 'category', 'date', 'lat', 'long', 'magnitude')
+        .where({ category: category.substring(1) })
+}
+
 const insertEvents = (event) => {
     console.log('event.js modules:', event)
     return db('natural_events')
@@ -34,5 +40,6 @@ module.exports = {
     getAllEvents,
     insertEvents,
     getAllEarthquakes,
-    deleteDuplicateEvents
+    deleteDuplicateEvents,
+    getEventsByCategory
 }

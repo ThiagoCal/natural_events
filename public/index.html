@@ -11,22 +11,19 @@
 </head>
 
 <body>
-    <!-- <h1>My First Google Map</h1> -->
-    <!-- <form> -->
-    <!-- <label for="filter-country">Filter by Country</label> -->
-
-    <!-- do we want a drop down with all the countries that had events? or does the user type the input? -->
-    <!-- <section>
-            <option></option>
-        </section>
-        <input type="text" name="country" id="filter-country"> -->
-    <!-- </form> -->
-
 
     <div class="dropdown">
-        <button id="dropdown-btn" class="dropbtn">Dropdown</button>
+        <button id="dropdown-btn" class="dropbtn">Countries</button>
         <div id="myDropdown" class="dropdown-content">
             <input type="text" placeholder="Search.." id="myInput">
+
+        </div>
+    </div>
+
+    <div class="dropdown">
+        <button id="category-btn" class="dropbtn">Categories</button>
+        <div id="categoryDropdown" class="dropdown-content">
+            <input type="text" placeholder="Search.." id="inputCategory">
 
         </div>
     </div>
@@ -35,8 +32,7 @@
     </div>
 
     <script src="script.js"></script>
-    <script async
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKG3n2BRP3bALN3nRj1Bq2uhF95M2bPJA&callback=initMap"></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKG3n2BRP3bALN3nRj1Bq2uhF95M2bPJA"></script>
 </body>
 
 </html>

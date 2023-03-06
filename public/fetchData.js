@@ -28,7 +28,7 @@ axiosTest()
 const postEarthquakeData = async (data) => {
     for (let i = 0; i < data.length; i++) {
         const { magnitude, title, date, latitude: lat, longitude: long } = data[i]
-        let newObj = { magnitude, category: 'earthquake', title, date, lat, long }
+        let newObj = { magnitude, category: 'earthquakes', title, date, lat, long }
         let country = await getCountry(newObj.lat, newObj.long)
         newObj.country = country
         try {
@@ -63,7 +63,7 @@ const axiosEONET = async () => {
     const response = await axios.get(EONET_API_ENDPOINT)
     const events = response.data.events;
     const filteredEvents = Promise.all(events.map(async event => {
-        const category = event['categories'][0]['title']
+        const category = event['categories'][0]['title'].toLowerCase()
         const title = event['title']
         const geometryLength = event['geometry'].length
         const unit = event['geometry'][geometryLength - 1]['magnitudeUnit']
