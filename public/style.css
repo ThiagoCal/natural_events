@@ -15,6 +15,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 20%;
+    height: 100vh;
     /* align-items: center; */
 }
 
@@ -114,6 +115,10 @@ body {
     background-color: #AA91B6;
     border: none;
     color: white;
+    justify-content: flex-end;
+    width: 10rem;
+    font-size: 16px;
+
 }
 
 #reset-btn:hover {
