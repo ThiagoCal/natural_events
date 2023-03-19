@@ -37,10 +37,16 @@ const deleteDuplicateEvents = () => {
 
 }
 
+const truncateTable = () => {
+    return db('natural_events')
+        .truncate()
+}
+
 module.exports = {
     getAllEvents,
     insertEvents,
     deleteDuplicateEvents,
     getEventsByCategory,
-    getEventsByCountry
+    getEventsByCountry,
+    truncateTable
 }

@@ -2,8 +2,10 @@ const { getAllEvents,
     insertEvents,
     getEventsByCategory,
     getEventsByCountry,
-    deleteDuplicateEvents } = require('../modules/events.js');
+    deleteDuplicateEvents,
+    truncateTable } = require('../modules/events.js');
 
+const timeout = 1000 * 60 * 60 * 24 // every day in milliseconds
 
 const _getAllEvents = (req, res) => {
     getAllEvents()
@@ -37,6 +39,19 @@ const _deleteDuplicateEvents = (req, res) => {
         .catch(err => console.log(err));
 }
 
+const _truncateTable = (req, res) => {
+    truncateTable()
+        .then(data => console.log('truncated table successfully'))
+        .catch(err => console.log(err));
+}
+
+setInterval(() => {
+    _truncateTable()
+        .then(data => {
+            _insertEvents()
+                .then(data => console.log(data))
+        })
+}, timeout)
 
 module.exports = {
     _getAllEvents,
